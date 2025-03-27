@@ -15,10 +15,12 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 public abstract class Timestamped {
 
+    // ✅ 생성된 시간
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
+    // ✅ 업데이트된 시간
     @LastModifiedDate
     private LocalDateTime updatedAt;
 }
