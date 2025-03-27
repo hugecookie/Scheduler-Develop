@@ -17,28 +17,28 @@ public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
 
-    // 일정 등록
+    // ✅ 일정 등록
     public ScheduleResponseDto createSchedule(ScheduleRequestDto requestDto) {
         Schedule schedule = new Schedule(requestDto);
         Schedule saved = scheduleRepository.save(schedule);
         return new ScheduleResponseDto(saved);
     }
 
-    // 일정 전체 조회
+    // ✅ 일정 전체 조회
     public List<ScheduleResponseDto> getSchedules() {
         return scheduleRepository.findAllByOrderByCreatedAtDesc().stream()
                 .map(ScheduleResponseDto::new)
                 .collect(Collectors.toList());
     }
 
-    // 일정 단건 조회
+    // ✅ 일정 단건 조회
     public ScheduleResponseDto getSchedule(Long id) {
         Schedule schedule = scheduleRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 일정이 존재하지 않습니다."));
         return new ScheduleResponseDto(schedule);
     }
 
-    // 일정 수정
+    // ✅ 일정 수정
     public ScheduleResponseDto updateSchedule(Long id, ScheduleRequestDto requestDto) {
         Schedule schedule = scheduleRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 일정이 존재하지 않습니다."));
@@ -46,7 +46,7 @@ public class ScheduleService {
         return new ScheduleResponseDto(schedule);
     }
 
-    // 일정 삭제
+    // ✅ 일정 삭제
     public void deleteSchedule(Long id) {
         scheduleRepository.deleteById(id);
     }
