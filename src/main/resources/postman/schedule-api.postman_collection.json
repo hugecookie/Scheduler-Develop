@@ -1,0 +1,88 @@
+{
+  "info": {
+    "_postman_id": "abcd1234-5678-9012-3456-7890abcdef12",
+    "name": "Schedule API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Schedule",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"스터디 준비\",\n  \"content\": \"Spring 강의 복습하기\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/schedules",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "schedules"]
+        }
+      }
+    },
+    {
+      "name": "Get All Schedules",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:8080/api/schedules",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "schedules"]
+        }
+      }
+    },
+    {
+      "name": "Get One Schedule",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:8080/api/schedules/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "schedules", "1"]
+        }
+      }
+    },
+    {
+      "name": "Update Schedule",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"수정된 제목\",\n  \"content\": \"내용도 바뀜\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/schedules/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "schedules", "1"]
+        }
+      }
+    },
+    {
+      "name": "Delete Schedule",
+      "request": {
+        "method": "DELETE",
+        "url": {
+          "raw": "http://localhost:8080/api/schedules/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "schedules", "1"]
+        }
+      }
+    }
+  ]
+}
