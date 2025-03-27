@@ -21,35 +21,8 @@
 
 > 아래는 예상 ERD입니다.
 
-```mermaid
-erDiagram
-Table users {
-  id bigint [pk, increment]
-  username varchar(50)
-  email varchar(100)
-  password varchar(100)
-  created_at datetime
-  updated_at datetime
-}
+![ERD 이미지](src/img/dbdiagram.png)
 
-Table schedules {
-  id bigint [pk, increment]
-  title varchar(255)
-  content text
-  user_id bigint [ref: > users.id]
-  created_at datetime
-  updated_at datetime
-}
-
-Table schedules_history {
-  id bigint [pk, increment]
-  schedule_id bigint [ref: > schedules.id]
-  title varchar(255)
-  content text
-  modified_at datetime
-}
-
-```
 
 ---
 
