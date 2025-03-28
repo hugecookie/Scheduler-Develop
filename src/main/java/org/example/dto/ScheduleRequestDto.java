@@ -1,6 +1,7 @@
 package org.example.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,4 +16,7 @@ public class ScheduleRequestDto {
 
     // 할 일 내용 (선택)
     private String content;
+
+    @NotNull
+    private Long userId; // ✅ 작성자 ID
 }

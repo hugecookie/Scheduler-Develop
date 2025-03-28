@@ -28,9 +28,10 @@ public class Schedule extends Timestamped {
     private User user;
 
     // ✅ 생성자 (RequestDto)
-    public Schedule(ScheduleRequestDto dto) {
+    public Schedule(ScheduleRequestDto dto, User user) {
         this.title = dto.getTitle();
         this.content = dto.getContent();
+        this.user = user;
     }
 
     // ✅ 수정 메서드

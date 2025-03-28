@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.example.dto.ScheduleRequestDto;
 import org.example.dto.ScheduleResponseDto;
 import org.example.entity.Schedule;
+import org.example.entity.User;
 import org.example.repository.ScheduleRepository;
+import org.example.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,12 +18,15 @@ import java.util.stream.Collectors;
 public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
+    private final UserRepository userRepository;
 
     // ✅ 일정 등록
-    public ScheduleResponseDto createSchedule(ScheduleRequestDto requestDto) {
-        Schedule schedule = new Schedule(requestDto);
-        Schedule saved = scheduleRepository.save(schedule);
-        return new ScheduleResponseDto(saved);
+    public ScheduleResponseDto createSchedule(ScheduleRequestDto dto) {
+        User user = userRepository.findById(dto.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다."));
+        Schedule schedule = new Schedule(dto, user);
+        scheduleRepository.save(schedule);
+        return new ScheduleResponseDto(schedule);
     }
 
     // ✅ 일정 전체 조회
