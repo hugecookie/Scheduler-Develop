@@ -22,7 +22,12 @@ public class Schedule extends Timestamped {
     // ✅ 할 일 내용 (선택 입력)
     private String content;
 
-    // ✅ 생성자
+    // ✅ 연관관계: 작성자 (User) - user_id FK
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    // ✅ 생성자 (RequestDto)
     public Schedule(ScheduleRequestDto dto) {
         this.title = dto.getTitle();
         this.content = dto.getContent();
@@ -33,6 +38,4 @@ public class Schedule extends Timestamped {
         this.title = dto.getTitle();
         this.content = dto.getContent();
     }
-
-    // 추후 Lv2에서 작성자(User)와 연관관계 추가 예정
 }
