@@ -21,10 +21,14 @@ public class ScheduleService {
     private final UserRepository userRepository;
 
     // ✅ 일정 등록
-    public ScheduleResponseDto createSchedule(ScheduleRequestDto dto) {
-        User user = userRepository.findById(dto.getUserId())
+    public ScheduleResponseDto createSchedule(ScheduleRequestDto requestDto) {
+        User user = userRepository.findById(requestDto.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다."));
-        Schedule schedule = new Schedule(dto, user);
+        Schedule schedule = new Schedule(
+                requestDto.getTitle(),
+                requestDto.getContent(),
+                user
+        );
         scheduleRepository.save(schedule);
         return new ScheduleResponseDto(schedule);
     }
