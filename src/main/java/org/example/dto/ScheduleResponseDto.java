@@ -16,10 +16,22 @@ public class ScheduleResponseDto {
     // 내용
     private String content;
 
-    // 생성자: 엔티티를 DTO로 변환
-    public ScheduleResponseDto(Schedule schedule) {
-        this.id = schedule.getId();
-        this.title = schedule.getTitle();
-        this.content = schedule.getContent();
+    // 작성자 Id
+    private Long userId;
+
+    // 작성자 이름
+    private String username;
+
+    // 작성자 email
+    private String email;
+
+    public ScheduleResponseDto(Long id, String title, String content,
+                               Long userId, String username, String email) {
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.userId = userId;
+        this.username = username;
+        this.email = email;
     }
 }

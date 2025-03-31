@@ -1,5 +1,6 @@
 package org.example.service;
 
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.ScheduleRequestDto;
 import org.example.dto.ScheduleResponseDto;
@@ -30,21 +31,46 @@ public class ScheduleService {
                 user
         );
         scheduleRepository.save(schedule);
-        return new ScheduleResponseDto(schedule);
+        return new ScheduleResponseDto(
+                schedule.getId(),
+                schedule.getTitle(),
+                schedule.getContent(),
+                schedule.getUser().getId(),
+                schedule.getUser().getUsername(),
+                schedule.getUser().getEmail()
+        );
     }
 
     // ✅ 일정 전체 조회
+    @Transactional(readOnly = true)
     public List<ScheduleResponseDto> getSchedules() {
-        return scheduleRepository.findAllByOrderByCreatedAtDesc().stream()
-                .map(ScheduleResponseDto::new)
+        List<Schedule> schedules = scheduleRepository.findAllByOrderByCreatedAtDesc();
+
+        return schedules.stream()
+                .map(schedule -> new ScheduleResponseDto(
+                        schedule.getId(),
+                        schedule.getTitle(),
+                        schedule.getContent(),
+                        schedule.getUser().getId(),
+                        schedule.getUser().getUsername(),
+                        schedule.getUser().getEmail()
+                ))
                 .collect(Collectors.toList());
     }
+
 
     // ✅ 일정 단건 조회
     public ScheduleResponseDto getSchedule(Long id) {
         Schedule schedule = scheduleRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 일정이 존재하지 않습니다."));
-        return new ScheduleResponseDto(schedule);
+        return new ScheduleResponseDto(
+                schedule.getId(),
+                schedule.getTitle(),
+                schedule.getContent(),
+                schedule.getUser().getId(),
+                schedule.getUser().getUsername(),
+                schedule.getUser().getEmail()
+        );
     }
 
     // ✅ 일정 수정
@@ -52,7 +78,14 @@ public class ScheduleService {
         Schedule schedule = scheduleRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 일정이 존재하지 않습니다."));
         schedule.update(requestDto);
-        return new ScheduleResponseDto(schedule);
+        return new ScheduleResponseDto(
+                schedule.getId(),
+                schedule.getTitle(),
+                schedule.getContent(),
+                schedule.getUser().getId(),
+                schedule.getUser().getUsername(),
+                schedule.getUser().getEmail()
+        );
     }
 
     // ✅ 일정 삭제
