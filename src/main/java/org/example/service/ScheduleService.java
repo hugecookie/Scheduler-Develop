@@ -60,6 +60,7 @@ public class ScheduleService {
 
 
     // ✅ 일정 단건 조회
+    @Transactional(readOnly = true)
     public ScheduleResponseDto getSchedule(Long id) {
         Schedule schedule = scheduleRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 일정이 존재하지 않습니다."));
