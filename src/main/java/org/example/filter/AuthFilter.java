@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 // ✅ 인증 처리를 담당하는 필터 클래스
 public class AuthFilter implements Filter {
@@ -67,11 +68,14 @@ public class AuthFilter implements Filter {
 
             String json = """
             {
+                "timestamp": "%s",
+                "status": 401,
+                "error": "UNAUTHORIZED",
                 "code": "A001",
                 "message": "로그인이 필요합니다",
-                "status": "UNAUTHORIZED"
+                "path": "%s"
             }
-            """;
+            """.formatted(LocalDateTime.now(), uri);
 
             httpResponse.getWriter().write(json);
             return;
