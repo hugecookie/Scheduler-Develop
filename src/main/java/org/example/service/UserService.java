@@ -8,6 +8,8 @@ import org.example.dto.LoginResponseDto;
 import org.example.dto.UserRequestDto;
 import org.example.dto.UserResponseDto;
 import org.example.entity.User;
+import org.example.exception.CustomException;
+import org.example.exception.ErrorCode;
 import org.example.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,30 +42,33 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserResponseDto getUser(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         return new UserResponseDto(user);
     }
 
     // ✅ 유저 정보 수정
     public UserResponseDto updateUser(Long id, UserRequestDto dto) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         user.update(dto.getEmail(), dto.getPassword());
         return new UserResponseDto(user);
     }
 
     // ✅ 유저 삭제
     public void deleteUser(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
         userRepository.deleteById(id);
     }
 
     // ✅ 유저 로그인 후 쿠키 생성
     public LoginResponseDto login(LoginRequestDto requestDto, HttpServletResponse response) {
         User user = userRepository.findByEmail(requestDto.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 이메일입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         if (!user.getPassword().equals(requestDto.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new CustomException(ErrorCode.PASSWORD_MISMATCH);
         }
 
         // 로그인 성공 시 쿠키 생성

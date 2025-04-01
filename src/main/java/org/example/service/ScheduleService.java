@@ -1,5 +1,7 @@
 package org.example.service;
 
+import org.example.exception.CustomException;
+import org.example.exception.ErrorCode;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.ScheduleRequestDto;
@@ -24,7 +26,7 @@ public class ScheduleService {
     // ✅ 일정 등록
     public ScheduleResponseDto createSchedule(ScheduleRequestDto requestDto) {
         User user = userRepository.findById(requestDto.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         Schedule schedule = new Schedule(
                 requestDto.getTitle(),
                 requestDto.getContent(),
@@ -63,7 +65,7 @@ public class ScheduleService {
     @Transactional(readOnly = true)
     public ScheduleResponseDto getSchedule(Long id) {
         Schedule schedule = scheduleRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 일정이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.SCHEDULE_NOT_FOUND));
         return new ScheduleResponseDto(
                 schedule.getId(),
                 schedule.getTitle(),
@@ -77,7 +79,7 @@ public class ScheduleService {
     // ✅ 일정 수정
     public ScheduleResponseDto updateSchedule(Long id, ScheduleRequestDto requestDto) {
         Schedule schedule = scheduleRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 일정이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.SCHEDULE_NOT_FOUND));
         schedule.update(requestDto);
         return new ScheduleResponseDto(
                 schedule.getId(),
@@ -91,6 +93,9 @@ public class ScheduleService {
 
     // ✅ 일정 삭제
     public void deleteSchedule(Long id) {
+        if (!scheduleRepository.existsById(id)) {
+            throw new CustomException(ErrorCode.SCHEDULE_NOT_FOUND);
+        }
         scheduleRepository.deleteById(id);
     }
 }
