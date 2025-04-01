@@ -1,6 +1,10 @@
 package org.example.service;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.example.dto.LoginRequestDto;
+import org.example.dto.LoginResponseDto;
 import org.example.dto.UserRequestDto;
 import org.example.dto.UserResponseDto;
 import org.example.entity.User;
@@ -51,5 +55,23 @@ public class UserService {
     // ✅ 유저 삭제
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
+    }
+
+    // ✅ 유저 로그인 후 쿠키 생성
+    public LoginResponseDto login(LoginRequestDto requestDto, HttpServletResponse response) {
+        User user = userRepository.findByEmail(requestDto.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 이메일입니다."));
+
+        if (!user.getPassword().equals(requestDto.getPassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+
+        // 로그인 성공 시 쿠키 생성
+        Cookie cookie = new Cookie("userId", String.valueOf(user.getId()));
+        cookie.setPath("/");
+        cookie.setMaxAge(60 * 60); // 1시간
+        response.addCookie(cookie);
+
+        return new LoginResponseDto(user.getId(), user.getUsername());
     }
 }

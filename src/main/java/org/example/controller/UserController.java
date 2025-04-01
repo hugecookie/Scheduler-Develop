@@ -1,7 +1,10 @@
 package org.example.controller;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.example.dto.LoginRequestDto;
+import org.example.dto.LoginResponseDto;
 import org.example.dto.UserRequestDto;
 import org.example.dto.UserResponseDto;
 import org.example.service.UserService;
@@ -47,5 +50,12 @@ public class UserController {
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.ok().build();
+    }
+
+    // ✅ 로그인
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDto> login(@RequestBody @Valid LoginRequestDto requestDto,
+                                                  HttpServletResponse response) {
+        return ResponseEntity.ok(userService.login(requestDto, response));
     }
 }
