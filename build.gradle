@@ -31,6 +31,9 @@ dependencies {
 
     // Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    // password encryption
+    implementation 'at.favre.lib:bcrypt:0.10.2'
 }
 
 test {

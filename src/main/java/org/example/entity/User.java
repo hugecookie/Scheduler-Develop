@@ -15,15 +15,15 @@ public class User extends Timestamped {
     private Long id;
 
     // ✅ 유저명 (필수 입력)
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 50)
     private String username;
 
     // ✅ 이메일 (필수 입력)
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 50, unique = true)
     private String email;
 
     // ✅ 비밀번호 (필수 입력)
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 100)
     private String password;
 
     // ✅ 생성자 (회원 가입 시 사용)

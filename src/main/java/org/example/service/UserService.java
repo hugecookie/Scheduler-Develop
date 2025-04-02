@@ -3,6 +3,7 @@ package org.example.service;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.example.config.PasswordEncoder;
 import org.example.dto.LoginRequestDto;
 import org.example.dto.LoginResponseDto;
 import org.example.dto.UserRequestDto;
@@ -22,10 +23,15 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     // ✅ 유저 생성
     public UserResponseDto createUser(UserRequestDto dto) {
-        User user = new User(dto.getUsername(), dto.getEmail(), dto.getPassword());
+        // 비밀번호 암호화
+        String encodedPassword = passwordEncoder.encode(dto.getPassword());
+
+        // 암호화된 비밀번호로 유저 객체 생성
+        User user = new User(dto.getUsername(), dto.getEmail(), encodedPassword);
         userRepository.save(user);
         return new UserResponseDto(user);
     }
@@ -64,10 +70,12 @@ public class UserService {
 
     // ✅ 유저 로그인 후 쿠키 생성
     public LoginResponseDto login(LoginRequestDto requestDto, HttpServletResponse response) {
+        // 이메일로 유저 조회
         User user = userRepository.findByEmail(requestDto.getEmail())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        if (!user.getPassword().equals(requestDto.getPassword())) {
+        // 비밀번호 비교 (암호화된 비밀번호와 입력된 평문 비교)
+        if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
             throw new CustomException(ErrorCode.PASSWORD_MISMATCH);
         }
 

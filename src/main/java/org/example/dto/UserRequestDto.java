@@ -10,7 +10,7 @@ public class UserRequestDto {
 
     // ✅ 유저명 (필수)
     @NotBlank(message = "유저명은 필수입니다")
-    @Size(max = 10, message = "유저명은 10자 이내여야 합니다")
+    @Size(max = 20, message = "유저명은 20자 이내여야 합니다")
     private String username;
 
     // ✅ 이메일 (필수, 형식 검증)
