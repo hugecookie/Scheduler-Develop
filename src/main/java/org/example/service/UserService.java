@@ -27,6 +27,11 @@ public class UserService {
 
     // ✅ 유저 생성
     public UserResponseDto createUser(UserRequestDto dto) {
+        // 이메일 중복 시 메시지 출력
+        if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
+            throw new CustomException(ErrorCode.DUPLICATED_EMAIL);
+        }
+
         // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(dto.getPassword());
 
