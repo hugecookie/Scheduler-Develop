@@ -14,7 +14,11 @@ public enum ErrorCode {
     DUPLICATED_EMAIL("C003", "이미 등록된 이메일입니다.", HttpStatus.CONFLICT),
 
     // ✅ 일정 관련 에러
-    SCHEDULE_NOT_FOUND("S001", "존재하지 않는 일정입니다", HttpStatus.NOT_FOUND);
+    SCHEDULE_NOT_FOUND("S001", "존재하지 않는 일정입니다", HttpStatus.NOT_FOUND),
+
+    // ✅ 댓글 관련 에러
+    COMMENT_NOT_FOUND("CM001", "존재하지 않는 댓글입니다", HttpStatus.NOT_FOUND),
+    UNAUTHORIZED("CM002", "해당 댓글에 대한 권한이 없습니다", HttpStatus.UNAUTHORIZED);
 
     private final String code;
     private final String message;
