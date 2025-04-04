@@ -2,14 +2,18 @@ package org.example.service;
 
 import org.example.exception.CustomException;
 import org.example.exception.ErrorCode;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.ScheduleRequestDto;
 import org.example.dto.ScheduleResponseDto;
+import org.example.dto.ScheduleListResponseDto;
 import org.example.entity.Schedule;
 import org.example.entity.User;
 import org.example.repository.ScheduleRepository;
 import org.example.repository.UserRepository;
+import org.example.repository.CommentRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,6 +26,7 @@ public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
     private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
 
     // ✅ 일정 등록
     public ScheduleResponseDto createSchedule(ScheduleRequestDto requestDto) {
@@ -97,5 +102,23 @@ public class ScheduleService {
             throw new CustomException(ErrorCode.SCHEDULE_NOT_FOUND);
         }
         scheduleRepository.deleteById(id);
+    }
+
+    public Page<ScheduleListResponseDto> getSchedules(Pageable pageable) {
+        Page<Schedule> schedules = scheduleRepository.findAllByOrderByUpdatedAtDesc(pageable);
+
+        return schedules.map(schedule -> {
+            int commentCount = commentRepository.countByScheduleId(schedule.getId());
+            String username = schedule.getUser().getUsername();
+
+            return new ScheduleListResponseDto(
+                    schedule.getTitle(),
+                    schedule.getContent(),
+                    commentCount,
+                    schedule.getCreatedAt(),
+                    schedule.getUpdatedAt(),
+                    username
+            );
+        });
     }
 }

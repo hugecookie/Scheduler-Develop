@@ -2,9 +2,14 @@ package org.example.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.example.dto.ScheduleListResponseDto;
 import org.example.dto.ScheduleRequestDto;
 import org.example.dto.ScheduleResponseDto;
 import org.example.service.ScheduleService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,5 +53,14 @@ public class ScheduleController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         scheduleService.deleteSchedule(id);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/pages")
+    public Page<ScheduleListResponseDto> getSchedules(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("updatedAt").descending());
+        return scheduleService.getSchedules(pageable);
     }
 }
