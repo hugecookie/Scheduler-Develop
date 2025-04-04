@@ -14,6 +14,7 @@ import java.util.List;
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
     // ✅ 일정 전체를 최신순으로 조회
+    @EntityGraph(attributePaths = "user")
     List<Schedule> findAllByOrderByCreatedAtDesc();
 
     // ✅ 페이징 처리된 일정 전체를 수정일 기준 내림차순으로 조회
