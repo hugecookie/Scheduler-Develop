@@ -130,6 +130,29 @@
       }
     },
     {
+      "name": "User Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"hong@example.com\",\n  \"password\": \"1234\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/users/login",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "users", "login"]
+        }
+      }
+    },
+    {
       "name": "Create Comment",
       "request": {
         "method": "POST",
