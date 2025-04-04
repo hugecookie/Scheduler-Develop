@@ -8,25 +8,36 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
-// ✅ 인증 처리를 담당하는 필터 클래스
+/**
+ * 인증 처리를 담당하는 필터 클래스입니다.
+ * 로그인 여부를 확인하여 보호된 리소스에 대한 접근을 제어합니다.
+ */
 public class AuthFilter implements Filter {
 
-    // ✅ 로그인 및 회원가입은 인증 없이 접근 가능한 경로(화이트리스트)
+    /**
+     * 로그인 없이 접근 가능한 경로 목록 (화이트리스트)
+     */
     private static final String[] WHITE_LIST = {
             "/api/users",       // 회원가입
             "/api/users/login"  // 로그인
     };
 
-    // ✅ 요청이 들어올 때마다 실행되는 필터 메서드
+    /**
+     * 요청이 들어올 때마다 실행되는 메서드로, 로그인 여부를 검사합니다.
+     *
+     * @param request  서블릿 요청 객체
+     * @param response 서블릿 응답 객체
+     * @param chain    필터 체인
+     * @throws IOException 예외 발생 시 처리
+     * @throws ServletException 서블릿 처리 중 예외 발생 시 처리
+     */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
 
-        // ✅ HttpServletRequest, HttpServletResponse로 다운 캐스팅
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        // ✅ 요청 URI 확인
         String uri = httpRequest.getRequestURI();
 
         // 회원가입만 허용 (POST /api/users)
@@ -41,16 +52,11 @@ public class AuthFilter implements Filter {
             return;
         }
 
-
-        // ✅ 로그인 여부 확인 (쿠키 기반)
-        boolean hasUserId = false; // userId 쿠키 존재 여부
-
-        // ✅ 요청에 포함된 모든 쿠키 배열 가져오기
+        boolean hasUserId = false; // 로그인 여부 확인용
         Cookie[] cookies = httpRequest.getCookies();
 
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                // ✅ userId 쿠키가 있으면 로그인된 사용자로 간주
                 if ("userId".equals(cookie.getName())) {
                     hasUserId = true;
                     break;

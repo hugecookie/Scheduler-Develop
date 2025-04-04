@@ -18,6 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * ✅ 유저 관련 비즈니스 로직을 처리하는 서비스 클래스입니다.
+ */
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -25,23 +28,28 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    // ✅ 유저 생성
+    /**
+     * ✅ 유저를 생성합니다. (이메일 중복 체크 및 비밀번호 암호화 포함)
+     *
+     * @param dto 유저 생성 요청 데이터
+     * @return 생성된 유저 응답 DTO
+     */
     public UserResponseDto createUser(UserRequestDto dto) {
-        // 이메일 중복 시 메시지 출력
         if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
             throw new CustomException(ErrorCode.DUPLICATED_EMAIL);
         }
 
-        // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(dto.getPassword());
-
-        // 암호화된 비밀번호로 유저 객체 생성
         User user = new User(dto.getUsername(), dto.getEmail(), encodedPassword);
         userRepository.save(user);
         return UserResponseDto.from(user);
     }
 
-    // ✅ 유저 전체 조회
+    /**
+     * ✅ 전체 유저를 조회합니다.
+     *
+     * @return 유저 응답 DTO 리스트
+     */
     @Transactional(readOnly = true)
     public List<UserResponseDto> getUsers() {
         return userRepository.findAll().stream()
@@ -49,7 +57,12 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    // ✅ 유저 단건 조회
+    /**
+     * ✅ 특정 ID의 유저를 조회합니다.
+     *
+     * @param id 유저 ID
+     * @return 유저 응답 DTO
+     */
     @Transactional(readOnly = true)
     public UserResponseDto getUser(Long id) {
         User user = userRepository.findById(id)
@@ -57,7 +70,13 @@ public class UserService {
         return UserResponseDto.from(user);
     }
 
-    // ✅ 유저 정보 수정
+    /**
+     * ✅ 유저 정보를 수정합니다.
+     *
+     * @param id 유저 ID
+     * @param dto 유저 수정 요청 데이터
+     * @return 수정된 유저 응답 DTO
+     */
     public UserResponseDto updateUser(Long id, UserRequestDto dto) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
@@ -65,7 +84,11 @@ public class UserService {
         return UserResponseDto.from(user);
     }
 
-    // ✅ 유저 삭제
+    /**
+     * ✅ 유저를 삭제합니다.
+     *
+     * @param id 유저 ID
+     */
     public void deleteUser(Long id) {
         if (!userRepository.existsById(id)) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
@@ -73,23 +96,26 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    // ✅ 유저 로그인 후 쿠키 생성
+    /**
+     * ✅ 유저 로그인 시 이메일/비밀번호 검증 및 쿠키 발급
+     *
+     * @param requestDto 로그인 요청 데이터
+     * @param response HttpServletResponse에 쿠키 추가
+     * @return 로그인 응답 DTO
+     */
     public LoginResponseDto login(LoginRequestDto requestDto, HttpServletResponse response) {
-        // 이메일로 유저 조회
         User user = userRepository.findByEmail(requestDto.getEmail())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        // 비밀번호 비교 (암호화된 비밀번호와 입력된 평문 비교)
         if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
             throw new CustomException(ErrorCode.PASSWORD_MISMATCH);
         }
 
-        // 로그인 성공 시 쿠키 생성
         Cookie cookie = new Cookie("userId", String.valueOf(user.getId()));
         cookie.setPath("/");
         cookie.setMaxAge(60 * 60); // 1시간
         response.addCookie(cookie);
 
-        return new LoginResponseDto(user.getId(), user.getUsername());
+        return LoginResponseDto.from(user);
     }
 }
