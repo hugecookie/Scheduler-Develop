@@ -34,4 +34,15 @@ public class ScheduleResponseDto {
         this.username = username;
         this.email = email;
     }
+
+    public static ScheduleResponseDto from(Schedule schedule) {
+        return new ScheduleResponseDto(
+                schedule.getId(),
+                schedule.getTitle(),
+                schedule.getContent(),
+                schedule.getUser().getId(),
+                schedule.getUser().getUsername(),
+                schedule.getUser().getEmail()
+        );
+    }
 }

@@ -7,28 +7,27 @@ import java.time.LocalDateTime;
 
 @Getter
 public class UserResponseDto {
-
-    // ✅ 유저 고유 ID
     private Long id;
-
-    // ✅ 유저명
     private String username;
-
-    // ✅ 이메일
     private String email;
-
-    // ✅ 생성일
     private LocalDateTime createdAt;
-
-    // ✅ 수정일
     private LocalDateTime updatedAt;
 
-    // ✅ Entity → DTO 변환 생성자
-    public UserResponseDto(User user) {
-        this.id = user.getId();
-        this.username = user.getUsername();
-        this.email = user.getEmail();
-        this.createdAt = user.getCreatedAt();
-        this.updatedAt = user.getUpdatedAt();
+    public static UserResponseDto from(User user) {
+        return new UserResponseDto(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getCreatedAt(),
+                user.getUpdatedAt()
+        );
+    }
+
+    public UserResponseDto(Long id, String username, String email, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 }

@@ -35,15 +35,14 @@ public class CommentService {
 
         Comment comment = new Comment(requestDto.getContent(), user, schedule);
         commentRepository.save(comment);
-        return new CommentResponseDto(comment);
+        return CommentResponseDto.from(comment);
     }
 
     // ✅ 댓글 목록 조회 (일정 기준)
     @Transactional(readOnly = true)
     public List<CommentResponseDto> getComments(Long scheduleId) {
-        return commentRepository.findAllByScheduleIdOrderByCreatedAtDesc(scheduleId)
-                .stream()
-                .map(CommentResponseDto::new)
+        return commentRepository.findAllByScheduleIdOrderByCreatedAtDesc(scheduleId).stream()
+                .map(CommentResponseDto::from)
                 .collect(Collectors.toList());
     }
 
@@ -57,7 +56,7 @@ public class CommentService {
         }
 
         comment.update(requestDto.getContent());
-        return new CommentResponseDto(comment);
+        return CommentResponseDto.from(comment);
     }
 
     // ✅ 댓글 삭제

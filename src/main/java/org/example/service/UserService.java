@@ -38,14 +38,14 @@ public class UserService {
         // 암호화된 비밀번호로 유저 객체 생성
         User user = new User(dto.getUsername(), dto.getEmail(), encodedPassword);
         userRepository.save(user);
-        return new UserResponseDto(user);
+        return UserResponseDto.from(user);
     }
 
     // ✅ 유저 전체 조회
     @Transactional(readOnly = true)
     public List<UserResponseDto> getUsers() {
         return userRepository.findAll().stream()
-                .map(UserResponseDto::new)
+                .map(UserResponseDto::from)
                 .collect(Collectors.toList());
     }
 
@@ -54,7 +54,7 @@ public class UserService {
     public UserResponseDto getUser(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        return new UserResponseDto(user);
+        return UserResponseDto.from(user);
     }
 
     // ✅ 유저 정보 수정
@@ -62,7 +62,7 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         user.update(dto.getEmail(), dto.getPassword());
-        return new UserResponseDto(user);
+        return UserResponseDto.from(user);
     }
 
     // ✅ 유저 삭제

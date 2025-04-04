@@ -32,53 +32,25 @@ public class ScheduleService {
     public ScheduleResponseDto createSchedule(ScheduleRequestDto requestDto) {
         User user = userRepository.findById(requestDto.getUserId())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        Schedule schedule = new Schedule(
-                requestDto.getTitle(),
-                requestDto.getContent(),
-                user
-        );
+        Schedule schedule = new Schedule(requestDto.getTitle(), requestDto.getContent(), user);
         scheduleRepository.save(schedule);
-        return new ScheduleResponseDto(
-                schedule.getId(),
-                schedule.getTitle(),
-                schedule.getContent(),
-                schedule.getUser().getId(),
-                schedule.getUser().getUsername(),
-                schedule.getUser().getEmail()
-        );
+        return ScheduleResponseDto.from(schedule);
     }
 
     // ✅ 일정 전체 조회
     @Transactional(readOnly = true)
     public List<ScheduleResponseDto> getSchedules() {
-        List<Schedule> schedules = scheduleRepository.findAllByOrderByCreatedAtDesc();
-
-        return schedules.stream()
-                .map(schedule -> new ScheduleResponseDto(
-                        schedule.getId(),
-                        schedule.getTitle(),
-                        schedule.getContent(),
-                        schedule.getUser().getId(),
-                        schedule.getUser().getUsername(),
-                        schedule.getUser().getEmail()
-                ))
+        return scheduleRepository.findAllByOrderByCreatedAtDesc().stream()
+                .map(ScheduleResponseDto::from)
                 .collect(Collectors.toList());
     }
-
 
     // ✅ 일정 단건 조회
     @Transactional(readOnly = true)
     public ScheduleResponseDto getSchedule(Long id) {
         Schedule schedule = scheduleRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.SCHEDULE_NOT_FOUND));
-        return new ScheduleResponseDto(
-                schedule.getId(),
-                schedule.getTitle(),
-                schedule.getContent(),
-                schedule.getUser().getId(),
-                schedule.getUser().getUsername(),
-                schedule.getUser().getEmail()
-        );
+        return ScheduleResponseDto.from(schedule);
     }
 
     // ✅ 일정 수정
@@ -86,14 +58,7 @@ public class ScheduleService {
         Schedule schedule = scheduleRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.SCHEDULE_NOT_FOUND));
         schedule.update(requestDto);
-        return new ScheduleResponseDto(
-                schedule.getId(),
-                schedule.getTitle(),
-                schedule.getContent(),
-                schedule.getUser().getId(),
-                schedule.getUser().getUsername(),
-                schedule.getUser().getEmail()
-        );
+        return ScheduleResponseDto.from(schedule);
     }
 
     // ✅ 일정 삭제
@@ -104,21 +69,12 @@ public class ScheduleService {
         scheduleRepository.deleteById(id);
     }
 
+    // ✅ 일정 페이징
     public Page<ScheduleListResponseDto> getSchedules(Pageable pageable) {
-        Page<Schedule> schedules = scheduleRepository.findAllByOrderByUpdatedAtDesc(pageable);
-
-        return schedules.map(schedule -> {
-            int commentCount = commentRepository.countByScheduleId(schedule.getId());
-            String username = schedule.getUser().getUsername();
-
-            return new ScheduleListResponseDto(
-                    schedule.getTitle(),
-                    schedule.getContent(),
-                    commentCount,
-                    schedule.getCreatedAt(),
-                    schedule.getUpdatedAt(),
-                    username
-            );
-        });
+        return scheduleRepository.findAllByOrderByUpdatedAtDesc(pageable)
+                .map(schedule -> ScheduleListResponseDto.from(
+                        schedule,
+                        commentRepository.countByScheduleId(schedule.getId())
+                ));
     }
 }

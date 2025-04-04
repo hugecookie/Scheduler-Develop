@@ -14,12 +14,23 @@ public class CommentResponseDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public CommentResponseDto(Comment comment) {
-        this.id = comment.getId();
-        this.content = comment.getContent();
-        this.username = comment.getUser().getUsername();
-        this.scheduleId = comment.getSchedule().getId();
-        this.createdAt = comment.getCreatedAt();
-        this.updatedAt = comment.getUpdatedAt();
+    public CommentResponseDto(Long id, String content, String username, Long scheduleId, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.id = id;
+        this.content = content;
+        this.username = username;
+        this.scheduleId = scheduleId;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
+    public static CommentResponseDto from(Comment comment) {
+        return new CommentResponseDto(
+                comment.getId(),
+                comment.getContent(),
+                comment.getUser().getUsername(),
+                comment.getSchedule().getId(),
+                comment.getCreatedAt(),
+                comment.getUpdatedAt()
+        );
     }
 }
