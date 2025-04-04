@@ -7,24 +7,25 @@ import org.example.entity.Schedule;
 @Getter
 public class ScheduleResponseDto {
 
-    // 일정 ID
+    // ✅ 일정 ID
     private Long id;
 
-    // 제목
+    // ✅ 제목
     private String title;
 
-    // 내용
+    // ✅ 내용
     private String content;
 
-    // 작성자 Id
+    // ✅ 작성자 Id
     private Long userId;
 
-    // 작성자 이름
+    // ✅ 작성자 이름
     private String username;
 
-    // 작성자 email
+    // ✅ 작성자 email
     private String email;
 
+    // ✅ 생성자
     public ScheduleResponseDto(Long id, String title, String content,
                                Long userId, String username, String email) {
         this.id = id;
@@ -35,6 +36,7 @@ public class ScheduleResponseDto {
         this.email = email;
     }
 
+    // ✅ Schedule 엔티티와 댓글 수를 기반으로 DTO 변환
     public static ScheduleResponseDto from(Schedule schedule) {
         return new ScheduleResponseDto(
                 schedule.getId(),

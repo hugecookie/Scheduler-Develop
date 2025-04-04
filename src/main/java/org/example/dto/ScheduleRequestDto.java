@@ -8,13 +8,14 @@ import lombok.Getter;
 @Getter
 public class ScheduleRequestDto {
 
-    // 할 일 제목 (필수)
+    // ✅ 할 일 제목 (필수)
     @NotBlank(message = "제목은 필수입니다.")
     private String title;
 
-    // 할 일 내용 (선택)
+    // ✅ 할 일 내용 (선택)
     private String content;
 
+    // ✅ 작성자 ID
     @NotNull
-    private Long userId; // ✅ 작성자 ID
+    private Long userId;
 }
