@@ -66,6 +66,7 @@ public class CommentService {
      * @param requestDto 댓글 수정 요청 데이터
      * @return 수정된 댓글 응답 DTO
      */
+    @Transactional
     public CommentResponseDto updateComment(Long commentId, CommentRequestDto requestDto) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
@@ -77,7 +78,6 @@ public class CommentService {
         comment.update(requestDto.getContent());
         return CommentResponseDto.from(comment);
     }
-
     /**
      * ✅ 댓글을 삭제합니다. 작성자 본인만 삭제 가능.
      *
