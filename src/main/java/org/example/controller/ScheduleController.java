@@ -29,11 +29,13 @@ public class ScheduleController {
      * ✅ 일정 등록 요청을 처리합니다.
      *
      * @param requestDto 일정 생성 요청 데이터
+     * @param userId 인증된 사용자 ID
      * @return 생성된 일정 응답 DTO
      */
     @PostMapping
-    public ResponseEntity<ScheduleResponseDto> createSchedule(@RequestBody @Valid ScheduleRequestDto requestDto) {
-        return ResponseEntity.ok(scheduleService.createSchedule(requestDto));
+    public ResponseEntity<ScheduleResponseDto> createSchedule(@RequestAttribute Long userId,
+                                                              @RequestBody @Valid ScheduleRequestDto requestDto) {
+        return ResponseEntity.ok(scheduleService.createSchedule(userId, requestDto));
     }
 
     /**
@@ -78,23 +80,27 @@ public class ScheduleController {
      *
      * @param id 일정 ID
      * @param requestDto 수정할 일정 데이터
+     * @param userId 인증된 사용자 ID
      * @return 수정된 일정 응답 DTO
      */
     @PutMapping("/{id}")
     public ResponseEntity<ScheduleResponseDto> updateSchedule(@PathVariable Long id,
+                                                              @RequestAttribute Long userId,
                                                               @RequestBody @Valid ScheduleRequestDto requestDto) {
-        return ResponseEntity.ok(scheduleService.updateSchedule(id, requestDto));
+        return ResponseEntity.ok(scheduleService.updateSchedule(id, userId, requestDto));
     }
 
     /**
      * ✅ 일정을 삭제합니다.
      *
      * @param id 일정 ID
+     * @param userId 인증된 사용자 ID
      * @return 빈 응답
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteSchedule(@PathVariable Long id) {
-        scheduleService.deleteSchedule(id);
+    public ResponseEntity<Void> deleteSchedule(@PathVariable Long id,
+                                               @RequestAttribute Long userId) {
+        scheduleService.deleteSchedule(id, userId);
         return ResponseEntity.ok().build();
     }
 }

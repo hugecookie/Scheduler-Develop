@@ -31,11 +31,12 @@ public class CommentService {
     /**
      * ✅ 댓글을 생성합니다.
      *
+     * @param userId 인증된 사용자 ID
      * @param requestDto 댓글 생성 요청 데이터
      * @return 생성된 댓글 응답 DTO
      */
-    public CommentResponseDto createComment(CommentRequestDto requestDto) {
-        User user = userRepository.findById(requestDto.getUserId())
+    public CommentResponseDto createComment(Long userId, CommentRequestDto requestDto) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         Schedule schedule = scheduleRepository.findById(requestDto.getScheduleId())
@@ -63,26 +64,28 @@ public class CommentService {
      * ✅ 댓글을 수정합니다. 작성자 본인만 수정 가능.
      *
      * @param commentId 댓글 ID
+     * @param userId 인증된 사용자 ID
      * @param requestDto 댓글 수정 요청 데이터
      * @return 수정된 댓글 응답 DTO
      */
     @Transactional
-    public CommentResponseDto updateComment(Long commentId, CommentRequestDto requestDto) {
+    public CommentResponseDto updateComment(Long commentId, Long userId, CommentRequestDto requestDto) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
 
-        if (!comment.getUser().getId().equals(requestDto.getUserId())) {
+        if (!comment.getUser().getId().equals(userId)) {
             throw new CustomException(ErrorCode.UNAUTHORIZED);
         }
 
         comment.update(requestDto.getContent());
         return CommentResponseDto.from(comment);
     }
+
     /**
      * ✅ 댓글을 삭제합니다. 작성자 본인만 삭제 가능.
      *
      * @param commentId 댓글 ID
-     * @param userId 사용자 ID
+     * @param userId 인증된 사용자 ID
      */
     public void deleteComment(Long commentId, Long userId) {
         Comment comment = commentRepository.findById(commentId)

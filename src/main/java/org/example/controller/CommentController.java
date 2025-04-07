@@ -24,11 +24,13 @@ public class CommentController {
      * ✅ 댓글을 생성합니다.
      *
      * @param requestDto 댓글 요청 데이터
+     * @param userId 인증된 사용자 ID
      * @return 생성된 댓글 응답 DTO
      */
     @PostMapping
-    public ResponseEntity<CommentResponseDto> createComment(@RequestBody @Valid CommentRequestDto requestDto) {
-        return ResponseEntity.ok(commentService.createComment(requestDto));
+    public ResponseEntity<CommentResponseDto> createComment(@RequestAttribute Long userId,
+                                                            @RequestBody @Valid CommentRequestDto requestDto) {
+        return ResponseEntity.ok(commentService.createComment(userId, requestDto));
     }
 
     /**
@@ -47,24 +49,26 @@ public class CommentController {
      *
      * @param id 댓글 ID
      * @param requestDto 수정할 댓글 데이터
+     * @param userId 인증된 사용자 ID
      * @return 수정된 댓글 응답 DTO
      */
     @PutMapping("/{id}")
     public ResponseEntity<CommentResponseDto> updateComment(@PathVariable Long id,
+                                                            @RequestAttribute Long userId,
                                                             @RequestBody @Valid CommentRequestDto requestDto) {
-        return ResponseEntity.ok(commentService.updateComment(id, requestDto));
+        return ResponseEntity.ok(commentService.updateComment(id, userId, requestDto));
     }
 
     /**
      * ✅ 댓글을 삭제합니다.
      *
      * @param id 댓글 ID
-     * @param userId 사용자 ID (요청자)
+     * @param userId 인증된 사용자 ID
      * @return 빈 응답
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteComment(@PathVariable Long id,
-                                              @RequestParam Long userId) {
+                                              @RequestAttribute Long userId) {
         commentService.deleteComment(id, userId);
         return ResponseEntity.ok().build();
     }

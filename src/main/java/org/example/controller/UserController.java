@@ -92,4 +92,15 @@ public class UserController {
                                                   HttpServletResponse response) {
         return ResponseEntity.ok(userService.login(requestDto, response));
     }
+
+    /**
+     * ✅ 로그인된 사용자 정보 조회 (JWT 기반)
+     *
+     * @param userId 인증된 사용자 ID
+     * @return 유저 응답 DTO
+     */
+    @GetMapping("/me")
+    public ResponseEntity<UserResponseDto> getMyInfo(@RequestAttribute Long userId) {
+        return ResponseEntity.ok(userService.getUser(userId));
+    }
 }

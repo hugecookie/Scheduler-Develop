@@ -14,6 +14,7 @@ import org.example.exception.ErrorCode;
 import org.example.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.example.jwt.JwtUtil;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,6 +28,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     /**
      * ✅ 유저를 생성합니다. (이메일 중복 체크 및 비밀번호 암호화 포함)
@@ -111,11 +113,12 @@ public class UserService {
             throw new CustomException(ErrorCode.PASSWORD_MISMATCH);
         }
 
-        Cookie cookie = new Cookie("userId", String.valueOf(user.getId()));
-        cookie.setPath("/");
-        cookie.setMaxAge(60 * 60); // 1시간
-        response.addCookie(cookie);
+        // ✅ JWT 토큰 발급
+        String token = jwtUtil.createToken(user.getId(), user.getUsername());
 
-        return LoginResponseDto.from(user);
+        // ✅ 헤더에 Authorization: Bearer {token} 추가
+        response.setHeader("Authorization", "Bearer " + token);
+
+        return LoginResponseDto.from(user, token);
     }
 }

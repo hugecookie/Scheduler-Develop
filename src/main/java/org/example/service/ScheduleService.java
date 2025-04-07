@@ -33,11 +33,12 @@ public class ScheduleService {
     /**
      * ✅ 일정을 등록합니다.
      *
+     * @param userId 인증된 사용자 ID
      * @param requestDto 일정 등록 요청 데이터
      * @return 등록된 일정의 응답 DTO
      */
-    public ScheduleResponseDto createSchedule(ScheduleRequestDto requestDto) {
-        User user = userRepository.findById(requestDto.getUserId())
+    public ScheduleResponseDto createSchedule(Long userId, ScheduleRequestDto requestDto) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         Schedule schedule = new Schedule(
                 requestDto.getTitle(),
@@ -77,12 +78,18 @@ public class ScheduleService {
      * ✅ 특정 ID의 일정을 수정합니다.
      *
      * @param id 일정 ID
+     * @param userId 인증된 사용자 ID
      * @param requestDto 일정 수정 요청 데이터
      * @return 수정된 일정 응답 DTO
      */
-    public ScheduleResponseDto updateSchedule(Long id, ScheduleRequestDto requestDto) {
+    public ScheduleResponseDto updateSchedule(Long id, Long userId, ScheduleRequestDto requestDto) {
         Schedule schedule = scheduleRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.SCHEDULE_NOT_FOUND));
+
+        if (!schedule.getUser().getId().equals(userId)) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
+        }
+
         schedule.update(requestDto);
         return ScheduleResponseDto.from(schedule);
     }
@@ -91,12 +98,17 @@ public class ScheduleService {
      * ✅ 특정 ID의 일정을 삭제합니다.
      *
      * @param id 일정 ID
+     * @param userId 인증된 사용자 ID
      */
-    public void deleteSchedule(Long id) {
-        if (!scheduleRepository.existsById(id)) {
-            throw new CustomException(ErrorCode.SCHEDULE_NOT_FOUND);
+    public void deleteSchedule(Long id, Long userId) {
+        Schedule schedule = scheduleRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.SCHEDULE_NOT_FOUND));
+
+        if (!schedule.getUser().getId().equals(userId)) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
         }
-        scheduleRepository.deleteById(id);
+
+        scheduleRepository.delete(schedule);
     }
 
     /**
